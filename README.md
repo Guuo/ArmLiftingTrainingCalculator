@@ -3,4 +3,4 @@
 
 A training progression calculator intended for bouldering/climbing enthusiasts who want to train their grip and finger strength via "arm lifting" instead of dead hangs etc. Methodology and numbers lifted/adapted from this article: https://strengthclimbing.com/the-complete-guide-to-arm-lifting-finger-strength-training/
 
-Probably works on PC and Android with additional features (screen keep-awake and haptics for when the rest timer ends) for mobile users.
+Probably works on most devices capable of running a browser.

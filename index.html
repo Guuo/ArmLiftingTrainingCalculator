@@ -361,11 +361,11 @@
                             <div class="w-full flex justify-between items-start">
                                 <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Inter-Set Rest Timer</span>
                                 
-                                <!-- Haptic Feedback Toggle near Rest Timer -->
-                                <label class="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 px-2 py-1 rounded-lg cursor-pointer transition" title="Vibrate when timer completes">
-                                    <i data-lucide="vibrate" class="w-3.5 h-3.5 text-brand-500"></i>
-                                    <span class="text-[10px] text-slate-400 font-medium">Haptic Alert</span>
-                                    <input type="checkbox" id="haptic-toggle" class="sr-only peer" checked>
+                                <!-- Audio Alert Toggle near Rest Timer -->
+                                <label class="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 px-2 py-1 rounded-lg cursor-pointer transition" title="Play sound when timer completes">
+                                    <i data-lucide="volume-2" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    <span class="text-[10px] text-slate-400 font-medium">Audio Alert (LOUD!)</span>
+                                    <input type="checkbox" id="audio-toggle" class="sr-only peer" checked>
                                     <div class="w-6 h-3.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-brand-500 relative"></div>
                                 </label>
                             </div>
@@ -533,7 +533,7 @@
             timerDefaultSec: 180,
             wakeLock: null,
             wakeLockEnabled: false,
-            hapticsEnabled: true
+            audioEnabled: true
         };
 
         // Grip Info Database
@@ -627,7 +627,7 @@
         const elTimerStartBtn = document.getElementById('timer-start-btn');
         const elTimerResetBtn = document.getElementById('timer-reset-btn');
         const elWakeLockToggle = document.getElementById('wakelock-toggle');
-        const elHapticToggle = document.getElementById('haptic-toggle');
+        const elAudioToggle = document.getElementById('audio-toggle');
         const elGuideModal = document.getElementById('guide-modal');
         const elOpenGuideBtn = document.getElementById('open-guide-btn');
         const elCloseGuideBtn = document.getElementById('close-guide-btn');
@@ -654,16 +654,17 @@
             return secs > 0 ? `${mins}m ${secs}s` : `${mins} min`;
         }
 
-        function triggerShortHaptic() {
-            if (state.hapticsEnabled && 'vibrate' in navigator) {
-                navigator.vibrate(25);
-            }
-        }
-
-        function triggerTimerCompleteHaptics() {
-            if (state.hapticsEnabled && 'vibrate' in navigator) {
-                // Vibration pattern: [vibrate, pause, vibrate, pause, vibrate]
-                navigator.vibrate([200, 100, 200, 100, 400]);
+        function playAudioChime() {
+            if (state.audioEnabled) {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    osc.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } catch(e) {}
             }
         }
 
@@ -814,8 +815,6 @@
         }
 
         function startTimer() {
-            triggerShortHaptic();
-
             if (state.timerInterval) {
                 clearInterval(state.timerInterval);
                 state.timerInterval = null;
@@ -838,25 +837,13 @@
                     elTimerStartBtn.querySelector('span').textContent = "Start Rest";
                     state.timerRemainingSec = state.timerDefaultSec;
                     
-                    // Trigger Haptics on timer completion
-                    triggerTimerCompleteHaptics();
-
-                    // Audio completion chime
-                    try {
-                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                        const osc = ctx.createOscillator();
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(880, ctx.currentTime);
-                        osc.connect(ctx.destination);
-                        osc.start();
-                        osc.stop(ctx.currentTime + 0.3);
-                    } catch(e) {}
+                    // Trigger Audio Chime on timer completion
+                    playAudioChime();
                 }
             }, 1000);
         }
 
         function resetTimer() {
-            triggerShortHaptic();
             if (state.timerInterval) {
                 clearInterval(state.timerInterval);
                 state.timerInterval = null;
@@ -871,18 +858,15 @@
         function setupEventListeners() {
             elInput1RM.addEventListener('input', updateCalculator);
             elWeakDayToggle.addEventListener('change', () => {
-                triggerShortHaptic();
                 updateCalculator();
             });
             elQuickPctInput.addEventListener('input', updateCalculator);
             elSessionWeekSelect.addEventListener('change', () => {
-                triggerShortHaptic();
                 renderSessionWarmup();
             });
 
             // Keep Screen Awake Toggle
             elWakeLockToggle.addEventListener('change', (e) => {
-                triggerShortHaptic();
                 state.wakeLockEnabled = e.target.checked;
                 if (state.wakeLockEnabled) {
                     requestWakeLock();
@@ -891,15 +875,13 @@
                 }
             });
 
-            // Haptic Feedback Toggle
-            elHapticToggle.addEventListener('change', (e) => {
-                state.hapticsEnabled = e.target.checked;
-                triggerShortHaptic();
+            // Audio Alert Toggle
+            elAudioToggle.addEventListener('change', (e) => {
+                state.audioEnabled = e.target.checked;
             });
 
             document.querySelectorAll('.preset-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    triggerShortHaptic();
                     elInput1RM.value = e.target.getAttribute('data-val');
                     updateCalculator();
                 });
@@ -907,7 +889,6 @@
 
             document.querySelectorAll('.focus-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    triggerShortHaptic();
                     const target = e.currentTarget;
                     const focus = target.getAttribute('data-focus');
 
@@ -934,13 +915,11 @@
             }
 
             elGripSelect.addEventListener('change', (e) => {
-                triggerShortHaptic();
                 state.grip = e.target.value;
                 updateCalculator();
             });
 
             elUnitToggle.addEventListener('click', () => {
-                triggerShortHaptic();
                 if (state.unit === 'kg') {
                     state.unit = 'lbs';
                     state.oneRM = Math.round(state.oneRM * 2.20462);
@@ -958,7 +937,6 @@
             elTimerResetBtn.addEventListener('click', resetTimer);
 
             const toggleGuideModal = (show) => {
-                triggerShortHaptic();
                 if (show) elGuideModal.classList.remove('hidden');
                 else elGuideModal.classList.add('hidden');
             };
@@ -971,7 +949,6 @@
             });
 
             const toggleTestingModal = (show) => {
-                triggerShortHaptic();
                 if (show) elTestingModal.classList.remove('hidden');
                 else elTestingModal.classList.add('hidden');
             };
@@ -984,7 +961,6 @@
             });
 
             elCopyProgBtn.addEventListener('click', () => {
-                triggerShortHaptic();
                 const currentProtocol = protocols[state.focus];
                 const weakDayMod = state.isWeakDay ? 0.90 : 1.00;
                 const base1RM = getEffective1RMBase();
