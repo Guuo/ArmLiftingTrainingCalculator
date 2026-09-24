@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arm-Lifting Finger Strength Calculator | Strength Climbing</title>
+    
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <meta name="theme-color" content="#090d16">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arm-Lift Pulls">
+    <meta name="description" content="Arm-Lifting Block Pull Finger Strength Calculator based on Strength Climbing methodology.">
+
+    <!-- Inline Web App Manifest via Data URI -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Arm-Lifting Finger Strength Calculator","short_name":"ArmLift Pulls","start_url":".","display":"standalone","background_color":"#090d16","theme_color":"#090d16","description":"Block pull finger strength training calculator with weak day auto-regulation.","icons":[{"src":"https://placehold.co/192x192/f97316/ffffff?text=PULL","sizes":"192x192","type":"image/png"},{"src":"https://placehold.co/512x512/f97316/ffffff?text=PULL","sizes":"512x512","type":"image/png"}]}'>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            900: '#7c2d12',
+                        },
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        slate: {
+                            850: '#131e32',
+                            950: '#090d16'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090d16;
+            color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .glow-amber {
+            box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-brand-600 to-amber-500 p-2 rounded-xl text-white shadow-lg">
+                    <i data-lucide="dumbbell" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                        ARM-LIFT <span class="text-brand-500">PULLS</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-wider uppercase">Strength Climbing Methodology</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Keep Screen Awake Toggle in Header -->
+                <label class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 rounded-xl px-2.5 py-1.5 cursor-pointer transition" title="Keep screen awake while training">
+                    <i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
+                    <span class="text-[11px] font-semibold text-slate-300 hidden md:inline">Keep Awake</span>
+                    <input type="checkbox" id="wakelock-toggle" class="sr-only peer">
+                    <div class="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500 relative"></div>
+                </label>
+
+                <button id="open-guide-btn" class="flex items-center space-x-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition border border-slate-700">
+                    <i data-lucide="book-open" class="w-4 h-4 text-brand-500"></i>
+                    <span class="hidden sm:inline">Guide</span>
+                </button>
+                
+                <button id="unit-toggle-btn" class="flex items-center space-x-1 text-xs font-bold px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+                    <span>UNIT:</span>
+                    <span id="unit-label" class="text-brand-500">KG</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+        
+        <!-- Weak Day Alert Banner -->
+        <div id="weak-day-banner" class="hidden transition-all duration-300 bg-amber-950/60 border border-amber-500/40 rounded-2xl p-4 glow-amber">
+            <div class="flex items-start space-x-3">
+                <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg shrink-0">
+                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-bold text-amber-300 flex items-center space-x-2">
+                        <span>Weak Day / High Fatigue Mode Active</span>
+                        <span class="text-[10px] bg-amber-500/30 text-amber-200 px-2 py-0.5 rounded-full font-semibold uppercase">Auto-Regulated</span>
+                    </h3>
+                    <p class="text-xs text-amber-200/80 mt-1 leading-relaxed">
+                        Target working loads are reduced by <strong>10%</strong>. This preserves strict finger posture (preventing half-crimp collapse into chisel grip), protects pulleys from shear strain, and allows high neurological effort without overtaxing fatigued tissue.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Input Controls -->
+            <section class="lg:col-span-5 space-y-6">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <h2 class="text-base font-bold text-white flex items-center space-x-2">
+                            <i data-lucide="sliders" class="w-5 h-5 text-brand-500"></i>
+                            <span>Parameters & Testing</span>
+                        </h2>
+                        <span class="text-xs text-slate-400 bg-slate-800 px-2.5 py-1 rounded-full border border-slate-700">1RM Protocol</span>
+                    </div>
+
+                    <!-- 1RM Input -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1">
+                                <span>Tested 1RM Load</span>
+                                <button type="button" id="1rm-help-btn" class="text-slate-400 hover:text-brand-500 transition p-0.5 rounded-full hover:bg-slate-800" title="Click for 1RM Testing Guidelines">
+                                    <i data-lucide="help-circle" class="w-4 h-4 text-brand-500"></i>
+                                </button>
+                            </label>
+                            <span class="text-xs text-slate-400">Current Unit: <strong class="unit-text text-slate-200">kg</strong></span>
+                        </div>
+                        <div class="relative">
+                            <input type="number" id="input-1rm" min="1" max="200" step="0.5" value="45" 
+                                class="w-full bg-slate-950 border border-slate-700 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-2xl font-black text-white px-4 py-3 rounded-xl transition outline-none">
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold unit-text">kg</span>
+                        </div>
+                        <!-- Quick Presets -->
+                        <div class="flex items-center space-x-2 pt-1">
+                            <span class="text-[11px] text-slate-400">Quick set:</span>
+                            <div class="flex gap-1.5 flex-wrap">
+                                <button class="preset-btn text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-md text-slate-300 font-medium transition" data-val="25">25</button>
+                                <button class="preset-btn text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-md text-slate-300 font-medium transition" data-val="35">35</button>
+                                <button class="preset-btn text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-md text-slate-300 font-medium transition" data-val="45">45</button>
+                                <button class="preset-btn text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-md text-slate-300 font-medium transition" data-val="60">60</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grip Selection -->
+                    <div class="space-y-3 pt-2 border-t border-slate-800">
+                        <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Grip Style / Hardware</label>
+
+                        <select id="grip-select" class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none">
+                            <option value="20mm_half_crimp" data-mult="1.00">20mm Edge - Strict Half Crimp (Baseline 100%)</option>
+                            <option value="chisel_open_drag" data-mult="1.08">Chisel / Open Drag (~108% strength)</option>
+                            <option value="pinch_block" data-mult="0.82">Pinch Block 70-100mm (~82% strength)</option>
+                            <option value="micro_10mm" data-mult="0.75">10mm Micro Edge (~75% strength)</option>
+                            <option value="mono_pocket" data-mult="0.58">2-Finger Pocket / Mono (~58% strength)</option>
+                            <option value="sloper_block" data-mult="0.90">Sloper Block / Friction Lift (~90% strength)</option>
+                        </select>
+
+                        <!-- Dynamic Grip Info Banner -->
+                        <div id="grip-modifier-banner" class="p-3 bg-slate-950/80 border border-slate-800 rounded-xl text-xs space-y-1">
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span class="font-bold flex items-center space-x-1">
+                                    <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    <span id="grip-name-display">Strict Half Crimp</span>
+                                </span>
+                                <span id="grip-multiplier-tag" class="text-[10px] font-bold bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded-full border border-brand-500/30">100% Relative Load</span>
+                            </div>
+                            <p id="grip-tip-text" class="text-slate-400 text-[11px] leading-relaxed">
+                                Strict 90° PIP joint angle. Highest force transfer to A2/A4 pulleys without joint hyperextension.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Training Focus Selector -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Training Goal / Focus</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <button type="button" data-focus="strength" class="focus-btn active-focus flex flex-col items-center justify-center p-3 rounded-xl border text-center transition">
+                                <i data-lucide="zap" class="w-5 h-5 mb-1 text-brand-500"></i>
+                                <span class="text-xs font-bold block text-white">Strength</span>
+                                <span class="text-[10px] text-slate-400">82.5–87.5% • 3-5s</span>
+                            </button>
+                            <button type="button" data-focus="recruitment" class="focus-btn flex flex-col items-center justify-center p-3 rounded-xl border text-center transition">
+                                <i data-lucide="cpu" class="w-5 h-5 mb-1 text-slate-400"></i>
+                                <span class="text-xs font-bold block text-white">Recruitment</span>
+                                <span class="text-[10px] text-slate-400">75–80% • 7s</span>
+                            </button>
+                            <button type="button" data-focus="density" class="focus-btn flex flex-col items-center justify-center p-3 rounded-xl border text-center transition">
+                                <i data-lucide="layers" class="w-5 h-5 mb-1 text-slate-400"></i>
+                                <span class="text-xs font-bold block text-white">Pyramid</span>
+                                <span class="text-[10px] text-slate-400">Wave Loading</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Weak Day / High Fatigue Toggle -->
+                    <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <div class="p-1.5 bg-amber-500/10 text-amber-500 rounded-lg">
+                                    <i data-lucide="battery-low" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-200 block">"Weak Day" Modifier</span>
+                                    <span class="text-[10px] text-slate-400">Feeling sluggish or low CNS recovery?</span>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="weak-day-toggle" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Quick Single Load Percentage Calculator -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+                        <i data-lucide="calculator" class="w-4 h-4 text-brand-500"></i>
+                        <span>Quick Custom Load Calculator</span>
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3 items-center">
+                        <div>
+                            <label class="text-[11px] text-slate-400 uppercase font-semibold block mb-1">Target % of 1RM</label>
+                            <div class="relative">
+                                <input type="number" id="quick-pct-input" min="50" max="120" value="85" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-lg px-3 py-2 text-white outline-none focus:border-brand-500">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-500">%</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                            <span class="text-[10px] text-slate-400 uppercase font-semibold block">Calculated Weight</span>
+                            <span id="quick-calc-result" class="text-xl font-black text-brand-500">38.5</span>
+                            <span class="text-xs text-slate-400 unit-text">kg</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Program Output & Session Tools -->
+            <section class="lg:col-span-7 space-y-6">
+                
+                <!-- Main Program Output Card -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 gap-2">
+                        <div>
+                            <h2 class="text-base font-bold text-white flex items-center space-x-2">
+                                <i data-lucide="calendar" class="w-5 h-5 text-brand-500"></i>
+                                <span>4-Week Block Pull Progression Plan</span>
+                            </h2>
+                            <p class="text-xs text-slate-400">Structured mesocycle based on reported 1RM strength</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="copy-prog-btn" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg flex items-center space-x-1 transition">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copy Plan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Program Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                                    <th class="py-3 px-2">Week</th>
+                                    <th class="py-3 px-2">Intensity</th>
+                                    <th class="py-3 px-2">Load</th>
+                                    <th class="py-3 px-2">Sets × Reps</th>
+                                    <th class="py-3 px-2">Hold</th>
+                                    <th class="py-3 px-2">Rest</th>
+                                    <th class="py-3 px-2">Phase</th>
+                                </tr>
+                            </thead>
+                            <tbody id="program-table-body" class="divide-y divide-slate-800/60 font-medium">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Program Explanation Summary -->
+                    <div class="bg-slate-950/60 rounded-xl p-4 border border-slate-800 text-xs text-slate-300 space-y-2">
+                        <div class="flex items-center space-x-2 text-brand-500 font-bold">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <span id="program-title-summary">Strength Focus Protocol</span>
+                        </div>
+                        <p id="program-desc-summary" class="text-slate-400 leading-relaxed">
+                            Focuses on high neurological recruitment with heavy loads (82.5%–87.5% 1RM). Pull each rep smooth off the floor, avoiding explosive jerking. Maintain strict posture throughout.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Live Session Warm-Up & Timer Tool -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                            <i data-lucide="play-circle" class="w-5 h-5 text-brand-500"></i>
+                            <span>Single Session & Rest Timer</span>
+                        </h3>
+                        <select id="session-week-select" class="bg-slate-950 border border-slate-700 text-xs text-slate-200 rounded-lg px-2.5 py-1.5 outline-none focus:border-brand-500">
+                            <option value="1">Load Week 1 Weights</option>
+                            <option value="2">Load Week 2 Weights</option>
+                            <option value="3">Load Week 3 Weights</option>
+                            <option value="4">Load Week 4 Weights (Deload)</option>
+                        </select>
+                    </div>
+
+                    <!-- Session Breakdown -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- Warmup Protocol -->
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
+                                <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-500"></i>
+                                <span>Warm-Up Ramp Sets</span>
+                            </h4>
+                            <ul id="warmup-list" class="space-y-1.5 text-xs text-slate-400">
+                                <!-- Dynamic Warmup Steps -->
+                            </ul>
+                        </div>
+
+                        <!-- Timer Widget -->
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between items-center text-center space-y-3">
+                            <div class="w-full flex justify-between items-start">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Inter-Set Rest Timer</span>
+                                
+                                <!-- Haptic Feedback Toggle near Rest Timer -->
+                                <label class="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 px-2 py-1 rounded-lg cursor-pointer transition" title="Vibrate when timer completes">
+                                    <i data-lucide="vibrate" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    <span class="text-[10px] text-slate-400 font-medium">Haptic Alert</span>
+                                    <input type="checkbox" id="haptic-toggle" class="sr-only peer" checked>
+                                    <div class="w-6 h-3.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-brand-500 relative"></div>
+                                </label>
+                            </div>
+
+                            <div>
+                                <div id="timer-display" class="text-4xl font-black text-white font-mono my-1">03:00</div>
+                                <span id="timer-status" class="text-[11px] text-slate-500 block">Ready to rest</span>
+                            </div>
+                            
+                            <div class="flex space-x-2 w-full">
+                                <button id="timer-start-btn" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center space-x-1">
+                                    <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                                    <span>Start Rest</span>
+                                </button>
+                                <button id="timer-reset-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3 py-2 rounded-lg text-xs transition">
+                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Educational Guide Modal -->
+    <div id="guide-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl p-6 space-y-6">
+            
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-brand-500/10 text-brand-500 rounded-xl">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Strength Climbing Guide Summary</h3>
+                        <p class="text-xs text-slate-400">Key insights on Arm-Lifting & Finger Strength Training</p>
+                    </div>
+                </div>
+                <button id="close-guide-btn" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-300 leading-relaxed">
+                <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                    <h4 class="font-bold text-brand-400 uppercase text-[10px] tracking-wider">Why Arm-Lifting / Block Pulls?</h4>
+                    <p class="text-slate-400">Arm-lifting allows precise progressive overloading of finger flexor tendons without overloading shoulders or spinal axial loading associated with traditional hangboard weight belts.</p>
+                </div>
+                <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                    <h4 class="font-bold text-brand-400 uppercase text-[10px] tracking-wider">The "Weak Day" Principle</h4>
+                    <p class="text-slate-400">Connective tissue takes significantly longer to adapt and recover than muscular tissue. On low-readiness days, applying a 10% load reduction maintains mechanical tension stimulus while preventing pulley ligament strain and technique breakdown.</p>
+                </div>
+                <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                    <h4 class="font-bold text-brand-400 uppercase text-[10px] tracking-wider">Grip Style Specificity</h4>
+                    <p class="text-slate-400">Different grips recruit distinct muscle-tendon units. Selecting your grip automatically applies its relative force capacity ratio to scale working loads appropriately.</p>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 flex justify-end">
+                <button id="guide-ok-btn" class="bg-brand-600 hover:bg-brand-500 text-white font-bold px-5 py-2 rounded-xl text-xs transition">
+                    Close Guide
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 1RM Testing Protocol Modal -->
+    <div id="testing-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full max-h-[85vh] overflow-y-auto shadow-2xl p-6 space-y-5">
+            
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-brand-500/10 text-brand-500 rounded-xl">
+                        <i data-lucide="target" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">How to Test Your 1RM (Block Pull)</h3>
+                        <p class="text-xs text-slate-400">Standardized protocol for accurate load calculations</p>
+                    </div>
+                </div>
+                <button id="close-testing-modal-btn" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-brand-400 uppercase text-[10px] tracking-wider block">1. Thorough Warm-Up (10-15 min)</span>
+                    <p class="text-slate-400">Perform finger flexor gliding, light edge pulls, and body mobility. Never test 1RM cold.</p>
+                </div>
+
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-brand-400 uppercase text-[10px] tracking-wider block">2. Progressive Loading Protocol</span>
+                    <ul class="list-disc list-inside space-y-1 text-slate-400">
+                        <li>5 reps @ ~50% estimated 1RM (Rest 2 min)</li>
+                        <li>3 reps @ ~70% estimated 1RM (Rest 2.5 min)</li>
+                        <li>1 rep @ ~85% estimated 1RM (Rest 3 min)</li>
+                        <li><strong>1RM Attempts:</strong> Single pulls holding 3-5 seconds with 3-4 minutes rest between attempts. Increase by 0.5kg - 2kg increments until max clean effort.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-amber-400 uppercase text-[10px] tracking-wider block">3. Valid Lift Criteria & Failure Rules</span>
+                    <p class="text-slate-400">
+                        The lift counts ONLY if you break the weight clearly off the floor and hold it stationary for at least <strong>3 continuous seconds</strong> without:
+                    </p>
+                    <ul class="list-disc list-inside space-y-1 text-amber-200/80 mt-1">
+                        <li>Jerked motion using hip or back extension momentum.</li>
+                        <li>Slipping into a chisel/drag grip if testing Strict Half Crimp.</li>
+                        <li>Finger joint collapse or skin slippage.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 flex justify-end">
+                <button id="testing-modal-ok-btn" class="bg-brand-600 hover:bg-brand-500 text-white font-bold px-5 py-2 rounded-xl text-xs transition">
+                    Got it
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p>Based on Strength Climbing Finger Strength & Arm-Lifting Training Methodology.</p>
+            <p class="text-[11px] text-slate-600">Ensure proper warm-up before all maximal finger loading sessions. Listen to your body and auto-regulate when necessary.</p>
+        </div>
+    </footer>
+
+    <!-- Application Logic Script -->
+    <script>
+        // Inline Service Worker registration for PWA offline capabilities
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'armlift-calc-v1';
+                    self.addEventListener('install', (e) => {
+                        e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['./'])));
+                    });
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(caches.match(e.request).then(response => response || fetch(e.request)));
+                    });
+                `;
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+            });
+        }
+
+        // State Management
+        const state = {
+            unit: 'kg',
+            oneRM: 45,
+            focus: 'strength',
+            grip: '20mm_half_crimp',
+            isWeakDay: false,
+            timerInterval: null,
+            timerRemainingSec: 180,
+            timerDefaultSec: 180,
+            wakeLock: null,
+            wakeLockEnabled: false,
+            hapticsEnabled: true
+        };
+
+        // Grip Info Database
+        const gripDetails = {
+            '20mm_half_crimp': {
+                name: 'Strict Half Crimp',
+                multiplier: 1.00,
+                tip: 'Strict 90° PIP joint angle. Highest force transfer to A2/A4 pulleys without joint hyperextension.'
+            },
+            'chisel_open_drag': {
+                name: 'Chisel / Open Drag',
+                multiplier: 1.08,
+                tip: 'Passive DIP hyperextension. Higher load capacity (+8%) but less transfer to steep crimping.'
+            },
+            'pinch_block': {
+                name: 'Pinch Block (70-100mm)',
+                multiplier: 0.82,
+                tip: 'Thumb-dominant squeeze capacity (~82% of edge strength). Isolates thumb flexors & hand intrinsics.'
+            },
+            'micro_10mm': {
+                name: '10mm Micro Edge',
+                multiplier: 0.75,
+                tip: 'Reduced surface contact area increases local pressure. Load capacity drops to ~75% of 20mm.'
+            },
+            'mono_pocket': {
+                name: '2-Finger Pocket / Mono',
+                multiplier: 0.58,
+                tip: 'Isolated 2-finger force capacity (~58% of 4-finger 1RM). Heavy pulley shear strain.'
+            },
+            'sloper_block': {
+                name: 'Sloper Block / Friction Lift',
+                multiplier: 0.90,
+                tip: 'Friction-dependent sloper palm engagement (~90% of edge 1RM). Focus on open hand friction.'
+            }
+        };
+
+        // Protocol Definitions
+        const protocols = {
+            strength: {
+                title: "Strength Focus Protocol (Heavy Block Pulls)",
+                desc: "High intensity loading (82.5%–87.5% 1RM) with short 3-5s holds and full neural recovery (3 min rest). Prioritizes maximal motor unit recruitment.",
+                weeks: [
+                    { week: 1, basePct: 0.825, reps: 3, sets: 4, holdSec: 5, restMin: 3.0, note: "Build baseline tension" },
+                    { week: 2, basePct: 0.850, reps: 3, sets: 4, holdSec: 5, restMin: 3.0, note: "Increase intensity" },
+                    { week: 3, basePct: 0.875, reps: 2, sets: 5, holdSec: 4, restMin: 3.0, note: "Peak load week" },
+                    { week: 4, basePct: 0.700, reps: 3, sets: 3, holdSec: 5, restMin: 2.0, note: "Deload & recovery" }
+                ]
+            },
+            recruitment: {
+                title: "Neuromuscular Recruitment Focus",
+                desc: "Moderate-high intensity (75%–80% 1RM) with longer 7s holds. Increases time under tension while preserving strict half-crimp posture.",
+                weeks: [
+                    { week: 1, basePct: 0.750, reps: 4, sets: 3, holdSec: 7, restMin: 2.0, note: "Accumulation phase" },
+                    { week: 2, basePct: 0.775, reps: 4, sets: 4, holdSec: 7, restMin: 2.0, note: "Volume expansion" },
+                    { week: 3, basePct: 0.800, reps: 3, sets: 4, holdSec: 7, restMin: 2.5, note: "Intensification" },
+                    { week: 4, basePct: 0.650, reps: 3, sets: 3, holdSec: 7, restMin: 2.0, note: "Deload & recovery" }
+                ]
+            },
+            density: {
+                title: "Pyramid Wave Protocol",
+                desc: "Variable loading per set within each workout to hit both high recruitment and structural stamina. Excellent for hybrid finger conditioning.",
+                weeks: [
+                    { week: 1, basePct: 0.775, reps: "3,2,1,3", sets: 4, holdSec: 5, restMin: 2.5, note: "Wave 1 (75-82.5%)" },
+                    { week: 2, basePct: 0.800, reps: "3,2,1,3", sets: 4, holdSec: 5, restMin: 2.5, note: "Wave 2 (77.5-85%)" },
+                    { week: 3, basePct: 0.825, reps: "3,2,1,2", sets: 4, holdSec: 4, restMin: 3.0, note: "Peak Wave (80-87.5%)" },
+                    { week: 4, basePct: 0.650, reps: 3, sets: 3, holdSec: 5, restMin: 2.0, note: "Deload & recovery" }
+                ]
+            }
+        };
+
+        // DOM Elements
+        const elInput1RM = document.getElementById('input-1rm');
+        const elUnitLabel = document.getElementById('unit-label');
+        const elUnitToggle = document.getElementById('unit-toggle-btn');
+        const elUnitTexts = document.querySelectorAll('.unit-text');
+        const elWeakDayToggle = document.getElementById('weak-day-toggle');
+        const elWeakDayBanner = document.getElementById('weak-day-banner');
+        const elGripSelect = document.getElementById('grip-select');
+        const elGripNameDisplay = document.getElementById('grip-name-display');
+        const elGripMultiplierTag = document.getElementById('grip-multiplier-tag');
+        const elGripTipText = document.getElementById('grip-tip-text');
+        const elQuickPctInput = document.getElementById('quick-pct-input');
+        const elQuickCalcResult = document.getElementById('quick-calc-result');
+        const elProgramTableBody = document.getElementById('program-table-body');
+        const elProgramTitleSummary = document.getElementById('program-title-summary');
+        const elProgramDescSummary = document.getElementById('program-desc-summary');
+        const elSessionWeekSelect = document.getElementById('session-week-select');
+        const elWarmupList = document.getElementById('warmup-list');
+        const elTimerDisplay = document.getElementById('timer-display');
+        const elTimerStatus = document.getElementById('timer-status');
+        const elTimerStartBtn = document.getElementById('timer-start-btn');
+        const elTimerResetBtn = document.getElementById('timer-reset-btn');
+        const elWakeLockToggle = document.getElementById('wakelock-toggle');
+        const elHapticToggle = document.getElementById('haptic-toggle');
+        const elGuideModal = document.getElementById('guide-modal');
+        const elOpenGuideBtn = document.getElementById('open-guide-btn');
+        const elCloseGuideBtn = document.getElementById('close-guide-btn');
+        const elGuideOkBtn = document.getElementById('guide-ok-btn');
+        const elTestingModal = document.getElementById('testing-modal');
+        const elHelp1RMBtn = document.getElementById('1rm-help-btn');
+        const elCloseTestingModalBtn = document.getElementById('close-testing-modal-btn');
+        const elTestingModalOkBtn = document.getElementById('testing-modal-ok-btn');
+        const elCopyProgBtn = document.getElementById('copy-prog-btn');
+
+        // Helpers
+        function roundLoad(val) {
+            return Math.round(val * 2) / 2;
+        }
+
+        function getEffective1RMBase() {
+            const gripInfo = gripDetails[state.grip] || gripDetails['20mm_half_crimp'];
+            return state.oneRM * gripInfo.multiplier;
+        }
+
+        function formatRestTime(minutes) {
+            const mins = Math.floor(minutes);
+            const secs = Math.round((minutes - mins) * 60);
+            return secs > 0 ? `${mins}m ${secs}s` : `${mins} min`;
+        }
+
+        function triggerShortHaptic() {
+            if (state.hapticsEnabled && 'vibrate' in navigator) {
+                navigator.vibrate(25);
+            }
+        }
+
+        function triggerTimerCompleteHaptics() {
+            if (state.hapticsEnabled && 'vibrate' in navigator) {
+                // Vibration pattern: [vibrate, pause, vibrate, pause, vibrate]
+                navigator.vibrate([200, 100, 200, 100, 400]);
+            }
+        }
+
+        // Screen Wake Lock API Handling
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator && state.wakeLockEnabled) {
+                try {
+                    state.wakeLock = await navigator.wakeLock.request('screen');
+                } catch (err) {
+                    console.warn(`Wake Lock failed: ${err.message}`);
+                }
+            }
+        }
+
+        async function releaseWakeLock() {
+            if (state.wakeLock !== null) {
+                try {
+                    await state.wakeLock.release();
+                    state.wakeLock = null;
+                } catch(err) {}
+            }
+        }
+
+        // Re-acquire Wake Lock when switching back to application tab/window
+        document.addEventListener('visibilitychange', async () => {
+            if (state.wakeLockEnabled && state.wakeLock !== null && document.visibilityState === 'visible') {
+                await requestWakeLock();
+            }
+        });
+
+        function refreshIcons() {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        // Calculator Logic & Display Updates
+        function updateCalculator() {
+            state.oneRM = parseFloat(elInput1RM.value) || 0;
+            state.isWeakDay = elWeakDayToggle.checked;
+
+            if (state.isWeakDay) {
+                elWeakDayBanner.classList.remove('hidden');
+            } else {
+                elWeakDayBanner.classList.add('hidden');
+            }
+
+            const currentGripInfo = gripDetails[state.grip] || gripDetails['20mm_half_crimp'];
+            elGripNameDisplay.textContent = currentGripInfo.name;
+            elGripTipText.textContent = currentGripInfo.tip;
+
+            const multPct = Math.round(currentGripInfo.multiplier * 100);
+            elGripMultiplierTag.textContent = `${multPct}% Relative Multiplier`;
+            elGripMultiplierTag.className = "text-[10px] font-bold bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded-full border border-brand-500/30";
+
+            const effective1RM = getEffective1RMBase();
+            const quickPct = (parseFloat(elQuickPctInput.value) || 0) / 100;
+            const weakDayMod = state.isWeakDay ? 0.90 : 1.00;
+            const quickLoad = roundLoad(effective1RM * quickPct * weakDayMod);
+            elQuickCalcResult.textContent = quickLoad > 0 ? quickLoad : 0;
+
+            renderProgramTable();
+            renderSessionWarmup();
+        }
+
+        function renderProgramTable() {
+            const currentProtocol = protocols[state.focus];
+            const weakDayMod = state.isWeakDay ? 0.90 : 1.00;
+            const base1RM = getEffective1RMBase();
+
+            elProgramTitleSummary.textContent = currentProtocol.title + (state.isWeakDay ? " (Weak Day Auto-Regulated)" : "");
+            elProgramDescSummary.textContent = currentProtocol.desc;
+
+            elProgramTableBody.innerHTML = '';
+
+            currentProtocol.weeks.forEach((w) => {
+                const effectivePct = w.basePct * weakDayMod;
+                const effectiveLoad = roundLoad(base1RM * effectivePct);
+                const isDeload = w.week === 4;
+
+                const tr = document.createElement('tr');
+                tr.className = isDeload 
+                    ? 'bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 font-semibold transition' 
+                    : 'hover:bg-slate-800/50 transition';
+
+                tr.innerHTML = `
+                    <td class="py-3 px-2 font-bold text-white">W${w.week}</td>
+                    <td class="py-3 px-2">${Math.round(effectivePct * 100)}% <span class="text-[10px] text-slate-500">(${Math.round(w.basePct * 100)}%)</span></td>
+                    <td class="py-3 px-2 font-extrabold text-brand-400 text-sm">${effectiveLoad} ${state.unit}</td>
+                    <td class="py-3 px-2">${w.sets} × ${w.reps}</td>
+                    <td class="py-3 px-2">${w.holdSec}s</td>
+                    <td class="py-3 px-2">${formatRestTime(w.restMin)}</td>
+                    <td class="py-3 px-2">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isDeload ? 'bg-brand-500/20 text-brand-400 border border-brand-500/30' : 'bg-slate-800 text-slate-300'}">
+                            ${isDeload ? 'DELOAD' : w.note}
+                        </span>
+                    </td>
+                `;
+                elProgramTableBody.appendChild(tr);
+            });
+
+            refreshIcons();
+        }
+
+        function renderSessionWarmup() {
+            const selectedWeekNum = parseInt(elSessionWeekSelect.value) || 1;
+            const currentProtocol = protocols[state.focus];
+            const weekData = currentProtocol.weeks.find(w => w.week === selectedWeekNum) || currentProtocol.weeks[0];
+            
+            const weakDayMod = state.isWeakDay ? 0.90 : 1.00;
+            const base1RM = getEffective1RMBase();
+            const targetLoad = roundLoad(base1RM * weekData.basePct * weakDayMod);
+
+            state.timerDefaultSec = Math.round(weekData.restMin * 60);
+
+            const step1 = roundLoad(targetLoad * 0.50);
+            const step2 = roundLoad(targetLoad * 0.70);
+            const step3 = roundLoad(targetLoad * 0.85);
+
+            elWarmupList.innerHTML = `
+                <li class="flex justify-between items-center py-1 border-b border-slate-800/60">
+                    <span>1. General Fingers & Joint Warmup</span>
+                    <span class="text-slate-500">5-10 mins</span>
+                </li>
+                <li class="flex justify-between items-center py-1 border-b border-slate-800/60">
+                    <span>2. Ramp Set 1: ~50% Target (${step1} ${state.unit})</span>
+                    <span class="text-slate-300 font-semibold">5 reps</span>
+                </li>
+                <li class="flex justify-between items-center py-1 border-b border-slate-800/60">
+                    <span>3. Ramp Set 2: ~70% Target (${step2} ${state.unit})</span>
+                    <span class="text-slate-300 font-semibold">3 reps</span>
+                </li>
+                <li class="flex justify-between items-center py-1 border-b border-slate-800/60">
+                    <span>4. Ramp Set 3: ~85% Target (${step3} ${state.unit})</span>
+                    <span class="text-slate-300 font-semibold">1-2 reps</span>
+                </li>
+                <li class="flex justify-between items-center py-1 text-brand-400 font-bold pt-1">
+                    <span>5. Working Sets: ${weekData.sets} sets × ${targetLoad} ${state.unit}</span>
+                    <span>${weekData.holdSec}s hold</span>
+                </li>
+            `;
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(state.timerRemainingSec / 60);
+            const secs = state.timerRemainingSec % 60;
+            elTimerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            triggerShortHaptic();
+
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+                elTimerStartBtn.querySelector('span').textContent = "Resume Rest";
+                elTimerStatus.textContent = "Paused";
+                return;
+            }
+
+            elTimerStartBtn.querySelector('span').textContent = "Pause Rest";
+            elTimerStatus.textContent = "Resting between sets...";
+
+            state.timerInterval = setInterval(() => {
+                if (state.timerRemainingSec > 0) {
+                    state.timerRemainingSec--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(state.timerInterval);
+                    state.timerInterval = null;
+                    elTimerStatus.textContent = "Rest complete! Ready for next set.";
+                    elTimerStartBtn.querySelector('span').textContent = "Start Rest";
+                    state.timerRemainingSec = state.timerDefaultSec;
+                    
+                    // Trigger Haptics on timer completion
+                    triggerTimerCompleteHaptics();
+
+                    // Audio completion chime
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        const osc = ctx.createOscillator();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(880, ctx.currentTime);
+                        osc.connect(ctx.destination);
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.3);
+                    } catch(e) {}
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            triggerShortHaptic();
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+            }
+            state.timerRemainingSec = state.timerDefaultSec;
+            updateTimerDisplay();
+            elTimerStatus.textContent = "Ready to rest";
+            elTimerStartBtn.querySelector('span').textContent = "Start Rest";
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            elInput1RM.addEventListener('input', updateCalculator);
+            elWeakDayToggle.addEventListener('change', () => {
+                triggerShortHaptic();
+                updateCalculator();
+            });
+            elQuickPctInput.addEventListener('input', updateCalculator);
+            elSessionWeekSelect.addEventListener('change', () => {
+                triggerShortHaptic();
+                renderSessionWarmup();
+            });
+
+            // Keep Screen Awake Toggle
+            elWakeLockToggle.addEventListener('change', (e) => {
+                triggerShortHaptic();
+                state.wakeLockEnabled = e.target.checked;
+                if (state.wakeLockEnabled) {
+                    requestWakeLock();
+                } else {
+                    releaseWakeLock();
+                }
+            });
+
+            // Haptic Feedback Toggle
+            elHapticToggle.addEventListener('change', (e) => {
+                state.hapticsEnabled = e.target.checked;
+                triggerShortHaptic();
+            });
+
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    triggerShortHaptic();
+                    elInput1RM.value = e.target.getAttribute('data-val');
+                    updateCalculator();
+                });
+            });
+
+            document.querySelectorAll('.focus-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    triggerShortHaptic();
+                    const target = e.currentTarget;
+                    const focus = target.getAttribute('data-focus');
+
+                    document.querySelectorAll('.focus-btn').forEach(b => {
+                        b.classList.remove('border-brand-500', 'bg-brand-500/10', 'text-brand-500');
+                        b.classList.add('border-slate-800', 'bg-slate-950');
+                        const icon = b.querySelector('i');
+                        if (icon) icon.classList.replace('text-brand-500', 'text-slate-400');
+                    });
+
+                    target.classList.remove('border-slate-800', 'bg-slate-950');
+                    target.classList.add('border-brand-500', 'bg-brand-500/10');
+                    const targetIcon = target.querySelector('i');
+                    if (targetIcon) targetIcon.classList.replace('text-slate-400', 'text-brand-500');
+
+                    state.focus = focus;
+                    updateCalculator();
+                });
+            });
+
+            const initialFocusBtn = document.querySelector(`[data-focus="${state.focus}"]`);
+            if (initialFocusBtn) {
+                initialFocusBtn.classList.add('border-brand-500', 'bg-brand-500/10');
+            }
+
+            elGripSelect.addEventListener('change', (e) => {
+                triggerShortHaptic();
+                state.grip = e.target.value;
+                updateCalculator();
+            });
+
+            elUnitToggle.addEventListener('click', () => {
+                triggerShortHaptic();
+                if (state.unit === 'kg') {
+                    state.unit = 'lbs';
+                    state.oneRM = Math.round(state.oneRM * 2.20462);
+                } else {
+                    state.unit = 'kg';
+                    state.oneRM = Math.round(state.oneRM / 2.20462);
+                }
+                elInput1RM.value = state.oneRM;
+                elUnitLabel.textContent = state.unit.toUpperCase();
+                elUnitTexts.forEach(el => el.textContent = state.unit);
+                updateCalculator();
+            });
+
+            elTimerStartBtn.addEventListener('click', startTimer);
+            elTimerResetBtn.addEventListener('click', resetTimer);
+
+            const toggleGuideModal = (show) => {
+                triggerShortHaptic();
+                if (show) elGuideModal.classList.remove('hidden');
+                else elGuideModal.classList.add('hidden');
+            };
+
+            elOpenGuideBtn.addEventListener('click', () => toggleGuideModal(true));
+            elCloseGuideBtn.addEventListener('click', () => toggleGuideModal(false));
+            elGuideOkBtn.addEventListener('click', () => toggleGuideModal(false));
+            elGuideModal.addEventListener('click', (e) => {
+                if (e.target === elGuideModal) toggleGuideModal(false);
+            });
+
+            const toggleTestingModal = (show) => {
+                triggerShortHaptic();
+                if (show) elTestingModal.classList.remove('hidden');
+                else elTestingModal.classList.add('hidden');
+            };
+
+            elHelp1RMBtn.addEventListener('click', () => toggleTestingModal(true));
+            elCloseTestingModalBtn.addEventListener('click', () => toggleTestingModal(false));
+            elTestingModalOkBtn.addEventListener('click', () => toggleTestingModal(false));
+            elTestingModal.addEventListener('click', (e) => {
+                if (e.target === elTestingModal) toggleTestingModal(false);
+            });
+
+            elCopyProgBtn.addEventListener('click', () => {
+                triggerShortHaptic();
+                const currentProtocol = protocols[state.focus];
+                const weakDayMod = state.isWeakDay ? 0.90 : 1.00;
+                const base1RM = getEffective1RMBase();
+
+                let text = `=== ARM-LIFTING FINGER PROGRAM (${state.focus.toUpperCase()}) ===\n`;
+                text += `Tested Benchmark: ${state.oneRM} ${state.unit}\n`;
+                text += `Grip Style: ${elGripSelect.options[elGripSelect.selectedIndex].text}\n`;
+                if (state.isWeakDay) text += `* Note: Weak Day auto-regulation active (-10% intensity)\n`;
+                text += `\n`;
+
+                currentProtocol.weeks.forEach(w => {
+                    const effectivePct = w.basePct * weakDayMod;
+                    const load = roundLoad(base1RM * effectivePct);
+                    text += `Week ${w.week}: ${load}${state.unit} (${Math.round(effectivePct*100)}%) | ${w.sets}x${w.reps} | ${w.holdSec}s hold | ${w.restMin}m rest\n`;
+                });
+
+                text += `\nGenerated via Strength Climbing Methodology Calculator`;
+
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    const origText = elCopyProgBtn.innerHTML;
+                    elCopyProgBtn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span>Copied!</span>`;
+                    refreshIcons();
+                    setTimeout(() => {
+                        elCopyProgBtn.innerHTML = origText;
+                        refreshIcons();
+                    }, 2000);
+                } catch(e) {
+                    console.error('Copy failed');
+                }
+                document.body.removeChild(textarea);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            updateCalculator();
+            refreshIcons();
+        });
+    </script>
+</body>
+</html>
