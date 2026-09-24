@@ -1,2 +1,2 @@
 # ArmLiftingTrainingCalculator
-An arm lift training load progression calculator for finger training, mainly for climbers.
+100% vibeslop, contains absolutely no carefully crafted artesanal code.
